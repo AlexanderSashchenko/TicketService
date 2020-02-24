@@ -8,9 +8,11 @@ import com.fintechband.ticketservice.service.TicketService;
 
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class TicketServiceImpl implements TicketService {
 
     private static final String INITIAL_STATUS_NAME = "NEW";
@@ -36,7 +38,8 @@ public class TicketServiceImpl implements TicketService {
         if (ticket.isPresent()) {
             return ticket.get();
         } else {
-            throw new RuntimeException("Failed to find ticket with id" + id);
+            log.error("Failed to find ticket with id" + id);
+            throw new RuntimeException();
         }
     }
 }
