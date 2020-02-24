@@ -8,11 +8,13 @@ import com.fintechband.ticketservice.service.TicketPaymentService;
 
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
+@Slf4j
 public class TicketPaymentServiceImpl implements TicketPaymentService {
 
     private static final String INITIAL_STATUS_NAME = "NEW";
@@ -30,7 +32,7 @@ public class TicketPaymentServiceImpl implements TicketPaymentService {
         this.webClient = webClientBuilder.baseUrl(BASE_URL).build();
     }
 
-    @Scheduled(initialDelay = 30000L, fixedRate = 30000L)
+    @Scheduled(initialDelay = 60000L, fixedRate = 60000L)
     private void initPayment() {
         Optional<Ticket> ticket = getForPayment();
         if (ticket.isPresent()) {
@@ -42,7 +44,8 @@ public class TicketPaymentServiceImpl implements TicketPaymentService {
                     .block();
             updateStatus(id, updatedStatusName);
         } else {
-            throw new RuntimeException("No tickets available for payment found");
+            log.error("No tickets available for payment found");
+            throw new RuntimeException();
         }
     }
 
@@ -62,7 +65,8 @@ public class TicketPaymentServiceImpl implements TicketPaymentService {
             updatedTicket.setStatus(updatedStatus);
             ticketRepository.save(updatedTicket);
         } else {
-            throw new RuntimeException("Failed to update ticket status");
+            log.error("Failed to update ticket status");
+            throw new RuntimeException();
         }
     }
 }
