@@ -6,6 +6,8 @@ import com.fintechband.ticketservice.service.TicketService;
 
 import java.time.LocalDateTime;
 
+import javax.validation.Valid;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,12 +26,21 @@ public class TicketsController {
     }
 
     @PostMapping
-    public Long add(@RequestBody TicketRequestDto ticketRequestDto) {
+    public String add(@RequestBody @Valid TicketRequestDto ticketRequestDto,
+                      BindingResult bindingResult) {
         Ticket ticket = new Ticket();
-        ticket.setRouteNumber(ticketRequestDto.getRouteNumber());
-        ticket.setDepartureDateTime(LocalDateTime.parse(ticketRequestDto.getDepartureDateTime()));
-        ticketService.add(ticket);
-        return ticket.getId();
+        try {
+            ticket.setRouteNumber(ticketRequestDto.getRouteNumber());
+            ticket.setDepartureDateTime(LocalDateTime.parse(ticketRequestDto
+                    .getDepartureDateTime()));
+            if (bindingResult.hasErrors()) {
+                return "Validation error. Please enter correct data.";
+            }
+            ticketService.add(ticket);
+            return ticket.getId().toString();
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
     @GetMapping

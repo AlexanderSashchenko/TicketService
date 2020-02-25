@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Future;
-import javax.validation.constraints.NotEmpty;
 
 import lombok.Data;
 
@@ -21,7 +20,6 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Entered route number is empty")
     private String routeNumber;
 
     @Future(message =
